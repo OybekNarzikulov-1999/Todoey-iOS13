@@ -13,16 +13,15 @@ import CoreData
 class TodoListViewController: UITableViewController {
     
     var itemArray = [Item]()
-    let defaults = UserDefaults()
     
-    let dataFilePath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
+//    let dataFilePath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
     
     let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        print(dataFilePath)
+//        print(dataFilePath)
         loadItems()
         
         let appearance = UINavigationBarAppearance()
@@ -105,7 +104,7 @@ class TodoListViewController: UITableViewController {
         }catch{
             print("Error while saving data \(error)")
         }
-        self.tableView.reloadData()
+        tableView.reloadData()
     }
     
     func loadItems(with request: NSFetchRequest<Item> = Item.fetchRequest()){
@@ -122,6 +121,7 @@ class TodoListViewController: UITableViewController {
 //MARK: - Search button methods
 
 extension TodoListViewController: UISearchBarDelegate{
+    
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
         let request : NSFetchRequest<Item> = Item.fetchRequest()
         request.predicate = NSPredicate(format: "title CONTAINS[cd] %@", searchBar.text!)
@@ -130,6 +130,17 @@ extension TodoListViewController: UISearchBarDelegate{
         loadItems(with: request)
         
     }
-    //fefef
+    
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+    
+        if searchBar.text?.count == 0 {
+            loadItems()
+            
+            DispatchQueue.main.async {
+                searchBar.resignFirstResponder()
+            }
+            
+        }
+    }
     
 }
